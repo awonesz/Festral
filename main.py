@@ -34,6 +34,5 @@ async def reload(ctx, extension):
     client.reload_extension(f'cogs.{extension}')
     await ctx.send(embed=disnake.Embed(title="Успешно!", description=f'Вы успешно перезагрузили cog {extension}', colour=0x2B2933))
 
-
 if __name__ == '__main__':
     client.run(os.getenv('TOKEN'))

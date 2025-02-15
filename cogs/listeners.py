@@ -1,10 +1,13 @@
 import disnake
 from disnake.ext import commands
+import sqlite3
 
 
 class Listeners(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.db = sqlite3.connect('character.db')
+        self.cursor = self.db.cursor()
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -16,7 +19,20 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print('Бот запущен')
-
+        self._ensure_table_exists()
+        
+    def _ensure_table_exists(self):
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS character (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                age INTEGER NOT NULL,
+                faculty TEXT NOT NULL,
+                picture TEXT NOT NULL,
+                items TEXT 
+            )
+        ''')
+        self.db.commit()
 
 def setup(client):
     client.add_cog(Listeners(client))
