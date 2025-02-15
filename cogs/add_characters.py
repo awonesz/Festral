@@ -26,8 +26,9 @@ class AddCharacter(commands.Cog):
             await inter.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
             print(f"Ошибка при добавлении персонажа: {e}")
-        cursor.close()
-        db.close()
+        finally:
+            cursor.close()
+            db.close()
 
 def setup(client):
     client.add_cog(AddCharacter(client))
