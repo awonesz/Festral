@@ -40,9 +40,9 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print('Бот запущен')
-        self._ensure_table_exists()
+        self._character_ensure_table_exists()
         
-    def _ensure_table_exists(self):
+    def _character_ensure_table_exists(self):
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS character (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,7 +51,7 @@ class Listeners(commands.Cog):
                 faculty TEXT NOT NULL,
                 picture TEXT NOT NULL,
                 relationships INTEGER NOT NULL DEFAULT 50 CHECK (relationships >= 0 AND relationships <= 100),
-                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0 AND endurance <= 100),
+                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0),
                 items TEXT 
             )
         ''')

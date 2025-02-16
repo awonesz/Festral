@@ -12,7 +12,7 @@ class DeleteCharacter(commands.Cog):
 
     @commands.slash_command(name='delete_characters', description='Удалите персонажа из базу данных')
     @commands.has_any_role(ROLE_ADMIN[0], ROLE_ADMIN[1])
-    async def add_character(
+    async def del_character(
         self,
         inter: disnake.ApplicationCommandInteraction,
         name: str = commands.Param(name="имя", description="Введите имя персонажа"),

@@ -20,7 +20,7 @@ class ProfileView(disnake.ui.View):
         self.character_name = character_name
 
     @disnake.ui.button(label='🟢 Добавить +10', style=disnake.ButtonStyle.success)
-    @commands.has_permissions(administrator=True)
+    @commands.has_any_role(ROLE_ADMIN[0], ROLE_ADMIN[1])
     async def add_rel(self, button: disnake.ui.Button, inter: disnake.Interaction):
         cursor.execute('SELECT * FROM character WHERE name = ?', (self.character_name,))
         character = cursor.fetchone()
@@ -29,7 +29,7 @@ class ProfileView(disnake.ui.View):
         await self.update_profile(inter)
 
     @disnake.ui.button(label="🔴 Вычесть -10", style=disnake.ButtonStyle.danger)
-    @commands.has_permissions(administrator=True)
+    @commands.has_any_role(ROLE_ADMIN[0], ROLE_ADMIN[1])
     async def subtract_relationship(self, button: disnake.ui.Button, inter: disnake.Interaction):
         cursor.execute('SELECT * FROM character WHERE name = ?', (self.character_name,))
         character = cursor.fetchone()
