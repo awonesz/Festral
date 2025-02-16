@@ -1,370 +1,478 @@
 [
-  {
-    "name": "Аберто",
-    "coefficient": 2.1
-  },
-  {
-    "name": "Каве иминикум",
-    "coefficient": 3.7
-  },
-  {
-    "name": "Калворио",
-    "coefficient": 3.5
-  },
-  {
-    "name": "Кантис",
-    "coefficient": 2.8
-  },
-  {
-    "name": "Капациус экстремус",
-    "coefficient": 2.4
-  },
-  {
-    "name": "Карпе Ретрактум",
-    "coefficient": 2.9
-  },
-  {
-    "name": "Квиетус",
-    "coefficient": 2.0
-  },
-  {
-    "name": "Коллошу",
-    "coefficient": 2.4
-  },
-  {
-    "name": "Коллопортус",
-    "coefficient": 2.0
-  },
-  {
-    "name": "Конфундус",
-    "coefficient": 2.5
-  },
-  {
-    "name": "Конъюктивитус",
-    "coefficient": 11.0
-  },
-  {
-    "name": "Лакарнум Инфламаре",
-    "coefficient": 4.0
-  },
-  {
-    "name": "Лапифорс",
-    "coefficient": 3.6
-  },
-  {
-    "name": "Левикорпус",
-    "coefficient": 7.0
-  },
-  {
-    "name": "Левиосо",
-    "coefficient": 3.0
-  },
-  {
-    "name": "Легилименс",
-    "coefficient": 11.0
-  },
-  {
-    "name": "Либеракорпус",
-    "coefficient": 5.7
-  },
-  {
-    "name": "Локомотор",
-    "coefficient": 6.8
-  },
-  {
-    "name": "Локомотор виббли",
-    "coefficient": 5.8
-  },
-  {
-    "name": "Локомотор мортис",
-    "coefficient": 6.8
-  },
-  {
-    "name": "Пиертотум Локомотор",
-    "coefficient": 10.5
-  },
-  {
-    "name": "Люмос",
-    "coefficient": 2.0
-  },
-  {
-    "name": "Люмос дуо",
-    "coefficient": 2.3
-  },
-  {
-    "name": "Люмос максима",
-    "coefficient": 2.3
-  },
-  {
-    "name": "Люмос солем",
-    "coefficient": 2.2
-  },
-  {
-    "name": "Магикус экстримус",
-    "coefficient": 6.5
-  },
-  {
-    "name": "Репелло маглетум",
-    "coefficient": 5.8
-  },
-  {
-    "name": "Мелофорс",
-    "coefficient": 5.8
-  },
-  {
-    "name": "Метео реканто",
-    "coefficient": 6.0
-  },
-  {
-    "name": "Мимбл вимбл",
-    "coefficient": 5.0
-  },
-  {
-    "name": "Мобилиарбус",
-    "coefficient": 3.8
-  },
-  {
-    "name": "Мобиликорпус",
-    "coefficient": 6.0
-  },
-  {
-    "name": "Мортмодре",
-    "coefficient": 5.5
-  },
-  {
-    "name": "Мукус ад нозем",
-    "coefficient": 5.0
-  },
-  {
-    "name": "Направление",
-    "coefficient": 1.5
-  },
-  {
-    "name": "Нокс",
-    "coefficient": 2.0
-  },
-  {
-    "name": "Обезъяз",
-    "coefficient": 3.0
-  },
-  {
-    "name": "Обливиэйт",
-    "coefficient": 18.0
-  },
-  {
-    "name": "Обливиэйт",
-    "coefficient": 18.0
-  },
-  {
-    "name": "Оглохни",
-    "coefficient": 6.8
-  },
-  {
-    "name": "Оживи",
-    "coefficient": 3.0
-  },
-  {
-    "name": "Окулус репаро",
-    "coefficient": 2.0
-  },
-  {
-    "name": "Окулус репаро",
-    "coefficient": 2.0
-  },
-  {
-    "name": "Оппуньо",
-    "coefficient": 1.2
-  },
-  {
-    "name": "Орбис",
-    "coefficient": 6.5
-  },
-  {
-    "name": "Орхидеус",
-    "coefficient": 3.4
-  },
-  {
-    "name": "Остолбеней",
-    "coefficient": 6.0
-  },
-  {
-    "name": "Остолбеней дуо",
-    "coefficient": 8.3
-  },
-  {
-    "name": "Остолбеней трио",
-    "coefficient": 12.8
-  },
-  {
-    "name": "Отключись",
-    "coefficient": 5.8
-  },
-  {
-    "name": "Партис темпорус",
-    "coefficient": 5.0
-  },
-  {
-    "name": "Перикулус",
-    "coefficient": 3.8
-  },
-  {
-    "name": "Петрификус тоталус",
-    "coefficient": 6.6
-  },
-  {
-    "name": "Портоберто",
-    "coefficient": 2.8
-  },
-  {
-    "name": "Приори Инкантатем",
-    "coefficient": 4.8
-  },
-  {
-    "name": "Протего",
-    "coefficient": 8.5
-  },
-  {
-    "name": "Протего диаболика",
-    "coefficient": 9.5
-  },
-  {
-    "name": "Протего дуо",
-    "coefficient": 9.5
-  },
-  {
-    "name": "Протего максима",
-    "coefficient": 20.0
-  },
-  {
-    "name": "Протего тоталум",
-    "coefficient": 9.6
-  },
-  {
-    "name": "Протего хоррибилис",
-    "coefficient": 9.5
-  },
-  {
-    "name": "Пуллус",
-    "coefficient": 6.0
-  },
-  {
-    "name": "Пэк",
-    "coefficient": 2.5
-  },
-  {
-    "name": "Ревелио",
-    "coefficient": 5.5
-  },
-  {
-    "name": "Редактум скулус",
-    "coefficient": 4.8
-  },
-  {
-    "name": "Редукто",
-    "coefficient": 6.0
-  },
-  {
-    "name": "Редуцио",
-    "coefficient": 5.8
-  },
-  {
-    "name": "Релашио",
-    "coefficient": 6.8
-  },
-  {
-    "name": "Репарифарго",
-    "coefficient": 4.2
-  },
-  {
-    "name": "Репаро",
-    "coefficient": 3.7
-  },
-  {
-    "name": "Репелло инимикум",
-    "coefficient": 15.0
-  },
-  {
-    "name": "Ридикулус",
-    "coefficient": 8.5
-  },
-  {
-    "name": "Риктумсемпра",
-    "coefficient": 5.6
-  },
-  {
-    "name": "Сальвио гексиа",
-    "coefficient": 11.5
-  },
-  {
-    "name": "Сезам откройся",
-    "coefficient": 5.0
-  },
-  {
-    "name": "Сектумсемпра",
-    "coefficient": 17.6
-  },
-  {
-    "name": "Серпенсортия",
-    "coefficient": 5.8
-  },
-  {
-    "name": "Силенцио",
-    "coefficient": 5.6
-  },
-  {
-    "name": "Систем Аперио",
-    "coefficient": 4.3
-  },
-  {
-    "name": "Сито из котла",
-    "coefficient": 5.0
-  },
-  {
-    "name": "Скрибблифорс",
-    "coefficient": 3.5
-  },
-  {
-    "name": "Скурж",
-    "coefficient": 5.6
-  },
-  {
-    "name": "Слагулус экурто",
-    "coefficient": 4.7
-  },
-  {
-    "name": "Снаффлифорс",
-    "coefficient": 5.2
-  },
-  {
-    "name": "Сонорус",
-    "coefficient": 3.5
-  },
-  {
-    "name": "Спанджифай",
-    "coefficient": 5.0
-  },
-  {
-    "name": "Стилклоу",
-    "coefficient": 5.5
-  },
-  {
-    "name": "Таранталлегра",
-    "coefficient": 5.3
-  },
-  {
-    "name": "Тергео",
-    "coefficient": 2.5
-  },
-  {
-    "name": "Титилландо",
-    "coefficient": 4.4
-  },
-  {
-    "name": "Фенестрам",
-    "coefficient": 2.8
-  },
-  {
-    "name": "Фера верто",
-    "coefficient": 3.5
-  }
+    {
+        "name": "Аберто",
+        "coefficient": 2.1
+    },
+    {
+        "name": "Каве иминикум",
+        "coefficient": 3.7
+    },
+    {
+        "name": "Калворио",
+        "coefficient": 3.5
+    },
+    {
+        "name": "Кантис",
+        "coefficient": 2.8
+    },
+    {
+        "name": "Капациус экстремус",
+        "coefficient": 2.4
+    },
+    {
+        "name": "Карпе Ретрактум",
+        "coefficient": 2.9
+    },
+    {
+        "name": "Квиетус",
+        "coefficient": 2.0
+    },
+    {
+        "name": "Коллошу",
+        "coefficient": 2.4
+    },
+    {
+        "name": "Коллопортус",
+        "coefficient": 2.0
+    },
+    {
+        "name": "Конфундус",
+        "coefficient": 2.5
+    },
+    {
+        "name": "Конъюктивитус",
+        "coefficient": 11.0
+    },
+    {
+        "name": "Лакарнум Инфламаре",
+        "coefficient": 4.0
+    },
+    {
+        "name": "Лапифорс",
+        "coefficient": 3.6
+    },
+    {
+        "name": "Левикорпус",
+        "coefficient": 7.0
+    },
+    {
+        "name": "Левиосо",
+        "coefficient": 3.0
+    },
+    {
+        "name": "Легилименс",
+        "coefficient": 11.0
+    },
+    {
+        "name": "Либеракорпус",
+        "coefficient": 5.7
+    },
+    {
+        "name": "Локомотор",
+        "coefficient": 6.8
+    },
+    {
+        "name": "Локомотор виббли",
+        "coefficient": 5.8
+    },
+    {
+        "name": "Локомотор мортис",
+        "coefficient": 6.8
+    },
+    {
+        "name": "Пиертотум Локомотор",
+        "coefficient": 10.5
+    },
+    {
+        "name": "Люмос",
+        "coefficient": 2.0
+    },
+    {
+        "name": "Люмос дуо",
+        "coefficient": 2.3
+    },
+    {
+        "name": "Люмос максима",
+        "coefficient": 2.3
+    },
+    {
+        "name": "Люмос солем",
+        "coefficient": 2.2
+    },
+    {
+        "name": "Магикус экстримус",
+        "coefficient": 6.5
+    },
+    {
+        "name": "Репелло маглетум",
+        "coefficient": 5.8
+    },
+    {
+        "name": "Мелофорс",
+        "coefficient": 5.8
+    },
+    {
+        "name": "Метео реканто",
+        "coefficient": 6.0
+    },
+    {
+        "name": "Мимбл вимбл",
+        "coefficient": 5.0
+    },
+    {
+        "name": "Мобилиарбус",
+        "coefficient": 3.8
+    },
+    {
+        "name": "Мобиликорпус",
+        "coefficient": 6.0
+    },
+    {
+        "name": "Мортмодре",
+        "coefficient": 5.5
+    },
+    {
+        "name": "Мукус ад нозем",
+        "coefficient": 5.0
+    },
+    {
+        "name": "Направление",
+        "coefficient": 1.5
+    },
+    {
+        "name": "Нокс",
+        "coefficient": 2.0
+    },
+    {
+        "name": "Обезъяз",
+        "coefficient": 3.0
+    },
+    {
+        "name": "Обливиэйт",
+        "coefficient": 18.0
+    },
+    {
+        "name": "Обливиэйт",
+        "coefficient": 18.0
+    },
+    {
+        "name": "Оглохни",
+        "coefficient": 6.8
+    },
+    {
+        "name": "Оживи",
+        "coefficient": 3.0
+    },
+    {
+        "name": "Окулус репаро",
+        "coefficient": 2.0
+    },
+    {
+        "name": "Окулус репаро",
+        "coefficient": 2.0
+    },
+    {
+        "name": "Оппуньо",
+        "coefficient": 1.2
+    },
+    {
+        "name": "Орбис",
+        "coefficient": 6.5
+    },
+    {
+        "name": "Орхидеус",
+        "coefficient": 3.4
+    },
+    {
+        "name": "Остолбеней",
+        "coefficient": 6.0
+    },
+    {
+        "name": "Остолбеней дуо",
+        "coefficient": 8.3
+    },
+    {
+        "name": "Остолбеней трио",
+        "coefficient": 12.8
+    },
+    {
+        "name": "Отключись",
+        "coefficient": 5.8
+    },
+    {
+        "name": "Партис темпорус",
+        "coefficient": 5.0
+    },
+    {
+        "name": "Перикулус",
+        "coefficient": 3.8
+    },
+    {
+        "name": "Петрификус тоталус",
+        "coefficient": 6.6
+    },
+    {
+        "name": "Портоберто",
+        "coefficient": 2.8
+    },
+    {
+        "name": "Приори Инкантатем",
+        "coefficient": 4.8
+    },
+    {
+        "name": "Протего",
+        "coefficient": 8.5
+    },
+    {
+        "name": "Протего диаболика",
+        "coefficient": 9.5
+    },
+    {
+        "name": "Протего дуо",
+        "coefficient": 9.5
+    },
+    {
+        "name": "Протего максима",
+        "coefficient": 20.0
+    },
+    {
+        "name": "Протего тоталум",
+        "coefficient": 9.6
+    },
+    {
+        "name": "Протего хоррибилис",
+        "coefficient": 9.5
+    },
+    {
+        "name": "Пуллус",
+        "coefficient": 6.0
+    },
+    {
+        "name": "Пэк",
+        "coefficient": 2.5
+    },
+    {
+        "name": "Ревелио",
+        "coefficient": 5.5
+    },
+    {
+        "name": "Редактум скулус",
+        "coefficient": 4.8
+    },
+    {
+        "name": "Редукто",
+        "coefficient": 6.0
+    },
+    {
+        "name": "Редуцио",
+        "coefficient": 5.8
+    },
+    {
+        "name": "Релашио",
+        "coefficient": 6.8
+    },
+    {
+        "name": "Репарифарго",
+        "coefficient": 4.2
+    },
+    {
+        "name": "Репаро",
+        "coefficient": 3.7
+    },
+    {
+        "name": "Репелло инимикум",
+        "coefficient": 15.0
+    },
+    {
+        "name": "Ридикулус",
+        "coefficient": 8.5
+    },
+    {
+        "name": "Риктумсемпра",
+        "coefficient": 5.6
+    },
+    {
+        "name": "Сальвио гексиа",
+        "coefficient": 11.5
+    },
+    {
+        "name": "Сезам откройся",
+        "coefficient": 5.0
+    },
+    {
+        "name": "Сектумсемпра",
+        "coefficient": 17.6
+    },
+    {
+        "name": "Серпенсортия",
+        "coefficient": 5.8
+    },
+    {
+        "name": "Силенцио",
+        "coefficient": 5.6
+    },
+    {
+        "name": "Систем Аперио",
+        "coefficient": 4.3
+    },
+    {
+        "name": "Сито из котла",
+        "coefficient": 5.0
+    },
+    {
+        "name": "Скрибблифорс",
+        "coefficient": 3.5
+    },
+    {
+        "name": "Скурж",
+        "coefficient": 5.6
+    },
+    {
+        "name": "Слагулус экурто",
+        "coefficient": 4.7
+    },
+    {
+        "name": "Снаффлифорс",
+        "coefficient": 5.2
+    },
+    {
+        "name": "Сонорус",
+        "coefficient": 3.5
+    },
+    {
+        "name": "Спанджифай",
+        "coefficient": 5.0
+    },
+    {
+        "name": "Стилклоу",
+        "coefficient": 5.5
+    },
+    {
+        "name": "Таранталлегра",
+        "coefficient": 5.3
+    },
+    {
+        "name": "Тергео",
+        "coefficient": 2.5
+    },
+    {
+        "name": "Титилландо",
+        "coefficient": 4.4
+    },
+    {
+        "name": "Фенестрам",
+        "coefficient": 2.8
+    },
+    {
+        "name": "Фера верто",
+        "coefficient": 3.5
+    },
+    {
+        "name": "Фианто Дури",
+        "coefficient": 14.0
+    },
+    {
+        "name": "Финита",
+        "coefficient": 5.0
+    },
+    {
+        "name": "Фините Инкантатем",
+        "coefficient": 8.0
+    },
+    {
+        "name": "Флагрейт",
+        "coefficient": 3.0
+    },
+    {
+        "name": "Флиппендо",
+        "coefficient": 5.0
+    },
+    {
+        "name": "Флиппендо Дуо",
+        "coefficient": 10.0
+    },
+    {
+        "name": "Флиппендо Триа",
+        "coefficient": 15.0
+    },
+    {
+        "name": "Фульгари",
+        "coefficient": 6.0
+    },
+    {
+        "name": "Фумос",
+        "coefficient": 4.2
+    },
+    {
+        "name": "Фумус Дуо",
+        "coefficient": 6.0
+    },
+    {
+        "name": "Фурункулус",
+        "coefficient": 13.6
+    },
+    {
+        "name": "Хербифорс",
+        "coefficient": 3.4
+    },
+    {
+        "name": "Циркумрота",
+        "coefficient": 7.1
+    },
+    {
+        "name": "Эбублио",
+        "coefficient": 9.5
+    },
+    {
+        "name": "Эванеско",
+        "coefficient": 11.3
+    },
+    {
+        "name": "Эверте Статум",
+        "coefficient": 8.3
+    },
+    {
+        "name": "Экскуро",
+        "coefficient": 6.5
+    },
+    {
+        "name": "Экспекто Патронум",
+        "coefficient": 38.8
+    },
+    {
+        "name": "Экспеллиармус",
+        "coefficient": 10.2
+    },
+    {
+        "name": "Экспеллимеллиус",
+        "coefficient": 6.2
+    },
+    {
+        "name": "Экспульсо",
+        "coefficient": 12.5
+    },
+    {
+        "name": "Эманципаре",
+        "coefficient": 7.2
+    },
+    {
+        "name": "Энгоргио",
+        "coefficient": 9.8
+    },
+    {
+        "name": "Энгоргио Скулус",
+        "coefficient": 8.8
+    },
+    {
+        "name": "Энтоморфиум",
+        "coefficient": 16.3
+    },
+    {
+        "name": "Эпискеи",
+        "coefficient": 11.3
+    },
+    {
+        "name": "Ябеда",
+        "coefficient": 14.5
+    }
 ]
