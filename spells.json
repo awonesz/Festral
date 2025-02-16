@@ -1,10 +1,6 @@
 [
     {
-        "name": "Экспекто Патронум",
-        "coefficient": 10.0
-    },
-    {
-        "name": "Экспеллиармус",
-        "coefficient": 2.0
+        "name": "Аберто",
+        "coefficient": 2.1
     }
 ]
