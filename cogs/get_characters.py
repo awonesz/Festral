@@ -16,6 +16,10 @@ class PaginationView(disnake.ui.View):
     current_page : int = 1
     sep : int = 5
 
+    def __init__(self, author_id: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.author_id = author_id
+
     async def send(self, inter: disnake.Interaction):
         await inter.response.send_message(view=self)
         self.message = await inter.original_message()
@@ -59,12 +63,18 @@ class PaginationView(disnake.ui.View):
 
     @disnake.ui.button(label="⬅️", style=disnake.ButtonStyle.primary)
     async def prev_button(self, button: disnake.ui.Button, interaction: disnake.Interaction):
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message("Вам недоступно это действие.", ephemeral=True)
+            return
         await interaction.response.defer()
         self.current_page -= 1
         await self.update_message(self.get_current_page_data())
 
     @disnake.ui.button(label="➡️", style=disnake.ButtonStyle.primary)
     async def next_button(self, button: disnake.ui.Button, interaction: disnake.Interaction):
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message("Вам недоступно это действие.", ephemeral=True)
+            return
         await interaction.response.defer()
         self.current_page += 1
         await self.update_message(self.get_current_page_data())
@@ -78,7 +88,7 @@ class Character(commands.Cog):
     async def profiles(self, inter: disnake.ApplicationCommandInteraction):
         cursor.execute('SELECT * FROM character')
         data = cursor.fetchall()
-        pagination_view = PaginationView(timeout=None)
+        pagination_view = PaginationView(author_id=inter.author.id, timeout=None)  # Передаем ID пользователя
         pagination_view.data = data
         await pagination_view.send(inter)
 
