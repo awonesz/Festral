@@ -2,16 +2,10 @@ import disnake
 from disnake.ext import commands
 import sqlite3
 import asyncio
+from config import EMBED_COLOR, FACULTY_EMOJIS
 
 db = sqlite3.connect('character.db')
 cursor = db.cursor()
-
-FACULTY_EMOJIS = {
-    "Гриффиндор": "🦁",
-    "Слизерин": "🐍",
-    "Пуффендуй": "🦡",
-    "Когтевран": "🦅" 
-}
 
 class PaginationView(disnake.ui.View):
     current_page : int = 1
@@ -19,7 +13,7 @@ class PaginationView(disnake.ui.View):
 
     def __init__(self, author_id: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.author_id = author_id  # Идентификатор пользователя, вызвавшего команду
+        self.author_id = author_id
 
     async def send(self, inter: disnake.Interaction):
         await inter.response.send_message(view=self)
@@ -28,7 +22,7 @@ class PaginationView(disnake.ui.View):
 
     def create_embed(self, data):
         total_page = (len(self.data) + self.sep - 1) // self.sep
-        embed = disnake.Embed(title="🪄 Профили Персонажей", colour=0x2B2933)
+        embed = disnake.Embed(title="🪄 Festral | Профили Персонажей", colour=EMBED_COLOR)
         for item in data:
             name = item[1]
             age = item[2]
@@ -104,15 +98,15 @@ class Character(commands.Cog):
             character = cursor.fetchone()
 
             if character:
-                name, age, faculty, picture = character[1], character[2], character[3], character[4]
+                name, age, faculty, picture, relationships, endurance = character[1], character[2], character[3], character[4], character[5], character[6]
                 emoji = FACULTY_EMOJIS.get(faculty)
                 embed = disnake.Embed(
                     title=f"🪄 Festral | Профиль",
                     description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
-                    inline=True,
-                    colour=0x2B2933,
+                    colour=EMBED_COLOR,
                 )
                 embed.set_thumbnail(picture)
+                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationships}* единиц \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
                 await pagination_view.message.edit(embed=embed, view=None)
             else:
                 await inter.followup.send(f"Персонаж с именем `{character_name}` не найден.", ephemeral=True)

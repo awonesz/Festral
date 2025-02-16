@@ -1,6 +1,7 @@
 import disnake
 from disnake.ext import commands
 import sqlite3
+from config import ROLE_ADMIN, EMBED_COLOR
 
 db = sqlite3.connect('character.db')
 cursor = db.cursor()
@@ -10,13 +11,13 @@ class DeleteCharacter(commands.Cog):
         self.client = client
 
     @commands.slash_command(name='delete_characters', description='Удалите персонажа из базу данных')
-    @commands.has_any_role(1197999786217971804, 1198222492943269898)
+    @commands.has_any_role(ROLE_ADMIN)
     async def add_character(
         self,
         inter: disnake.ApplicationCommandInteraction,
         name: str = commands.Param(name="имя", description="Введите имя персонажа"),
     ):
-        embed = disnake.Embed(title='🪄 Успешно', description='Вы успешно удалили персонажа из БД!', colour=0x2B2933)
+        embed = disnake.Embed(title='🪄 Festral | Успешно', description='Вы успешно удалили персонажа из БД!', colour=EMBED_COLOR)
         try:
             cursor.execute("DELETE FROM character WHERE name = (?)", (name,))
             db.commit()
