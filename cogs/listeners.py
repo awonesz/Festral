@@ -29,6 +29,8 @@ class Listeners(commands.Cog):
                 age INTEGER NOT NULL,
                 faculty TEXT NOT NULL,
                 picture TEXT NOT NULL,
+                relationships TEXT NOT NULL,
+                endurance TEXT DEFAULT 100,
                 items TEXT 
             )
         ''')

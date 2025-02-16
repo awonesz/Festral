@@ -1,6 +1,7 @@
 import disnake
 from disnake.ext import commands
 import sqlite3
+import asyncio
 
 db = sqlite3.connect('character.db')
 cursor = db.cursor()
@@ -18,7 +19,7 @@ class PaginationView(disnake.ui.View):
 
     def __init__(self, author_id: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.author_id = author_id
+        self.author_id = author_id  # Идентификатор пользователя, вызвавшего команду
 
     async def send(self, inter: disnake.Interaction):
         await inter.response.send_message(view=self)
@@ -88,9 +89,36 @@ class Character(commands.Cog):
     async def profiles(self, inter: disnake.ApplicationCommandInteraction):
         cursor.execute('SELECT * FROM character')
         data = cursor.fetchall()
-        pagination_view = PaginationView(author_id=inter.author.id, timeout=None)  # Передаем ID пользователя
+        pagination_view = PaginationView(author_id=inter.author.id, timeout=None)
         pagination_view.data = data
         await pagination_view.send(inter)
+
+        def check(m: disnake.Message):
+            return m.author.id == inter.author.id and m.channel.id == inter.channel.id
+
+        try:
+            message = await self.client.wait_for("message", check=check, timeout=60.0)
+            character_name = message.content.strip()
+
+            cursor.execute('SELECT * FROM character WHERE name = ?', (character_name,))
+            character = cursor.fetchone()
+
+            if character:
+                name, age, faculty, picture = character[1], character[2], character[3], character[4]
+                emoji = FACULTY_EMOJIS.get(faculty)
+                embed = disnake.Embed(
+                    title=f"🪄 Festral | Профиль",
+                    description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
+                    inline=True,
+                    colour=0x2B2933,
+                )
+                embed.set_thumbnail(picture)
+                await pagination_view.message.edit(embed=embed, view=None)
+            else:
+                await inter.followup.send(f"Персонаж с именем `{character_name}` не найден.", ephemeral=True)
+
+        except asyncio.TimeoutError:
+            await inter.followup.send("Время ожидания истекло. Попробуйте снова.", ephemeral=True)
 
 
 def setup(client):
