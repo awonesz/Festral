@@ -1,7 +1,7 @@
 import os
 import disnake
 from disnake.ext import commands
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 
 intents = disnake.Intents.all()
 client = commands.Bot(command_prefix=commands.when_mentioned_or('F.'), intents=intents, status=disnake.Status.idle)

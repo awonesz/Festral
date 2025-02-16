@@ -2,14 +2,68 @@ import disnake
 from disnake.ext import commands
 import sqlite3
 import asyncio
-from config import EMBED_COLOR, FACULTY_EMOJIS
+from config import EMBED_COLOR, FACULTY_EMOJI, ROLE_ADMIN
 
 db = sqlite3.connect('character.db')
 cursor = db.cursor()
 
+def get_relationship_progress(relationships: int) -> str:
+    filled = '■' * (relationships // 10)
+    empty = '▢' * (10 - (relationships // 10))
+    return f"{filled}{empty} {relationships}%"
+
+
+class ProfileView(disnake.ui.View):
+    def __init__(self, author_id: int, character_name: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.author_id = author_id
+        self.character_name = character_name
+
+    @disnake.ui.button(label='🟢 Добавить +10', style=disnake.ButtonStyle.success)
+    @commands.has_permissions(administrator=True)
+    async def add_rel(self, button: disnake.ui.Button, inter: disnake.Interaction):
+        cursor.execute('SELECT * FROM character WHERE name = ?', (self.character_name,))
+        character = cursor.fetchone()
+        cursor.execute('UPDATE character SET relationships = relationships + 10 WHERE id = ?', (character[0],))
+        db.commit()
+        await self.update_profile(inter)
+
+    @disnake.ui.button(label="🔴 Вычесть -10", style=disnake.ButtonStyle.danger)
+    @commands.has_permissions(administrator=True)
+    async def subtract_relationship(self, button: disnake.ui.Button, inter: disnake.Interaction):
+        cursor.execute('SELECT * FROM character WHERE name = ?', (self.character_name,))
+        character = cursor.fetchone()
+        cursor.execute(
+            "UPDATE character SET relationships = relationships - 10 WHERE id = ?",
+            (character[0],)
+        )
+        db.commit()
+        await self.update_profile(inter)
+
+    async def update_profile(self, inter: disnake.Interaction):
+        cursor.execute("SELECT * FROM character WHERE name = ?", (self.character_name,))
+        character = cursor.fetchone()
+        if character:
+            name, age, faculty, picture, relationships, endurance = character[1], character[2], character[3], character[4], character[5], character[6]
+            emoji = FACULTY_EMOJI.get(faculty)
+            relationship_progress = get_relationship_progress(int(relationships))  # Преобразуем в прогресс
+            embed = disnake.Embed(
+                title=f"🪄 Festral | Профиль",
+                description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
+                colour=EMBED_COLOR,
+            )
+            embed.set_thumbnail(picture)
+            embed.add_field(
+                name="Показатели",
+                value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*',
+                inline=True
+            )
+            await inter.response.edit_message(embed=embed, view=self)
+
+
 class PaginationView(disnake.ui.View):
-    current_page : int = 1
-    sep : int = 5
+    current_page: int = 1
+    sep: int = 5
 
     def __init__(self, author_id: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,7 +81,7 @@ class PaginationView(disnake.ui.View):
             name = item[1]
             age = item[2]
             faculty = item[3]
-            emoji = FACULTY_EMOJIS.get(faculty)
+            emoji = FACULTY_EMOJI.get(faculty)
             embed.add_field(name=f'{name}, *{age}*', value=f"{emoji} {faculty}", inline=False)
         embed.set_footer(text=f'Страница {self.current_page} из {total_page}')
         return embed
@@ -41,13 +95,13 @@ class PaginationView(disnake.ui.View):
         if self.current_page == 1:
             self.prev_button.disabled = True
             self.prev_button.style = disnake.ButtonStyle.gray
-        else: 
+        else:
             self.prev_button.disabled = False
             self.prev_button.style = disnake.ButtonStyle.primary
         if self.current_page == total_page:
             self.next_button.disabled = True
             self.next_button.style = disnake.ButtonStyle.gray
-        else: 
+        else:
             self.next_button.disabled = False
             self.next_button.style = disnake.ButtonStyle.primary
 
@@ -57,20 +111,20 @@ class PaginationView(disnake.ui.View):
         return self.data[from_item:until_item]
 
     @disnake.ui.button(label="⬅️", style=disnake.ButtonStyle.primary)
-    async def prev_button(self, button: disnake.ui.Button, interaction: disnake.Interaction):
-        if interaction.user.id != self.author_id:
-            await interaction.response.send_message("Вам недоступно это действие.", ephemeral=True)
+    async def prev_button(self, button: disnake.ui.Button, inter: disnake.Interaction):
+        if inter.user.id != self.author_id:
+            await inter.response.send_message("Вам недоступно это действие.", ephemeral=True)
             return
-        await interaction.response.defer()
+        await inter.response.defer()
         self.current_page -= 1
         await self.update_message(self.get_current_page_data())
 
     @disnake.ui.button(label="➡️", style=disnake.ButtonStyle.primary)
-    async def next_button(self, button: disnake.ui.Button, interaction: disnake.Interaction):
-        if interaction.user.id != self.author_id:
-            await interaction.response.send_message("Вам недоступно это действие.", ephemeral=True)
+    async def next_button(self, button: disnake.ui.Button, inter: disnake.Interaction):
+        if inter.user.id != self.author_id:
+            await inter.response.send_message("Вам недоступно это действие.", ephemeral=True)
             return
-        await interaction.response.defer()
+        await inter.response.defer()
         self.current_page += 1
         await self.update_message(self.get_current_page_data())
 
@@ -94,20 +148,25 @@ class Character(commands.Cog):
             message = await self.client.wait_for("message", check=check, timeout=60.0)
             character_name = message.content.strip()
 
+            # Удаляем сообщение пользователя
+            await message.delete()
+
             cursor.execute('SELECT * FROM character WHERE name = ?', (character_name,))
             character = cursor.fetchone()
 
             if character:
                 name, age, faculty, picture, relationships, endurance = character[1], character[2], character[3], character[4], character[5], character[6]
-                emoji = FACULTY_EMOJIS.get(faculty)
+                emoji = FACULTY_EMOJI.get(faculty)
+                relationship_progress = get_relationship_progress(int(relationships))
                 embed = disnake.Embed(
                     title=f"🪄 Festral | Профиль",
                     description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
                     colour=EMBED_COLOR,
                 )
                 embed.set_thumbnail(picture)
-                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationships}* единиц \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
-                await pagination_view.message.edit(embed=embed, view=None)
+                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+                view = ProfileView(inter.author.id, character_name)
+                await pagination_view.message.edit(embed=embed, view=view)
             else:
                 await inter.followup.send(f"Персонаж с именем `{character_name}` не найден.", ephemeral=True)
 

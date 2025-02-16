@@ -18,6 +18,26 @@ class Listeners(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.Cog.listener()
+    async def character_error(self, inter: disnake.ApplicationCommandInteraction, error):
+        if isinstance(error, commands.MissingAnyRole):
+            embed = disnake.Embed(
+            title="❌ Festral | Ошибка",
+            description="У вас нет необходимых ролей для выполнения этой команды.",
+            color=EMBED_COLOR
+        )
+            await inter.response.send_message(embed=embed, ephemeral=True)
+
+    @commands.Cog.listener()
+    async def rel_error(self, inter: disnake.ApplicationCommandInteraction, error):
+        if isinstance(error, sqlite3.IntegrityError):
+            embed = disnake.Embed(
+            title="❌ Festral | Ошибка",
+            description="Вы не можете задать значение ниже 0 или выше 100",
+            color=EMBED_COLOR
+        )
+            await inter.response.send_message(embed=embed, ephemeral=True)
+
+    @commands.Cog.listener()
     async def on_ready(self):
         print('Бот запущен')
         self._ensure_table_exists()
@@ -30,8 +50,8 @@ class Listeners(commands.Cog):
                 age INTEGER NOT NULL,
                 faculty TEXT NOT NULL,
                 picture TEXT NOT NULL,
-                relationships TEXT NOT NULL DEFAULT 50,
-                endurance TEXT NOT NULL DEFAULT 100,
+                relationships INTEGER NOT NULL DEFAULT 50 CHECK (relationships >= 0 AND relationships <= 100),
+                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0 AND endurance <= 100),
                 items TEXT 
             )
         ''')

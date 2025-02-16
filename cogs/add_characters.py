@@ -11,7 +11,7 @@ class AddCharacter(commands.Cog):
         self.client = client
 
     @commands.slash_command(name='add_characters', description='Добавьте персонажа в базу данных')
-    @commands.has_any_role(ROLE_ADMIN)
+    @commands.has_any_role(ROLE_ADMIN[0], ROLE_ADMIN[1])
     async def add_character(
         self,
         inter: disnake.ApplicationCommandInteraction,

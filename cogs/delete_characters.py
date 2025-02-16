@@ -11,7 +11,7 @@ class DeleteCharacter(commands.Cog):
         self.client = client
 
     @commands.slash_command(name='delete_characters', description='Удалите персонажа из базу данных')
-    @commands.has_any_role(ROLE_ADMIN)
+    @commands.has_any_role(ROLE_ADMIN[0], ROLE_ADMIN[1])
     async def add_character(
         self,
         inter: disnake.ApplicationCommandInteraction,
@@ -24,9 +24,6 @@ class DeleteCharacter(commands.Cog):
             await inter.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
             print(f"Ошибка при удалении персонажа: {e}")
-        finally:
-            cursor.close()
-            db.close()
 
 def setup(client):
     client.add_cog(DeleteCharacter(client))
