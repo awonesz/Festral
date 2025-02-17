@@ -528,19 +528,35 @@
         "coefficient": 25.8
     },
     {
-        "name": "Круциатус",
-        "coefficient": 36.9
-    },
-    {
         "name": "Круцио",
         "coefficient": 36.9
     },
     {
-        "name": "Империус",
+        "name": "Империо",
         "coefficient": 39.2
     },
     {
-        "name": "Империо",
-        "coefficient": 39.2
+        "name": "Каве Инимикум",
+        "coefficient": 14.6
+    },
+    {
+        "name": "Столп красных искр",
+        "coefficient": 4.5
+    },
+    {
+        "name": "Сноп красных искр",
+        "coefficient": 4.5
+    },
+    {
+        "name": "Глациус",
+        "coefficient": 10.4
+    },
+    {
+        "name": "Вентус",
+        "coefficient": 10.5
+    },
+    {
+        "name": "Инсендио",
+        "coefficient": 8.7
     }
 ]

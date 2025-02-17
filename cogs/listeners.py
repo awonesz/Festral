@@ -50,12 +50,16 @@ class Listeners(commands.Cog):
             return
         if message.channel.category_id not in CATEGORIES_RP:
             return
+
         spells = load_spells()
         content = message.content.lower()
         found_spells = []
+        total_cost = 0  # Суммарные затраты на все заклинания
+
         for spell in spells:
             if spell['name'].lower() in content:
                 found_spells.append(spell)
+                total_cost += spell['coefficient']  # Суммируем затраты
 
         if found_spells:
             bot_name = message.author.name
@@ -64,38 +68,28 @@ class Listeners(commands.Cog):
 
             if result:
                 endurance = result[0]
-                for spell in found_spells:
-                    endurance -= spell['coefficient']
-                    if endurance <= 0:
-                        embed = disnake.Embed(
-                            title=f"{message.author.name} попытался использовать заклинание...",
-                            description=f'Персонаж попытался использовать заклинание, однако из-за недостатка выносливости палочка создала взрыв и отлетела в сторону...',
-                            colour=EMBED_COLOR
-                        )
-                        endurance = 0
-                        await message.channel.send(embed=embed)
-                        break
-                    else:
-                        spell_list = "\n".join([f"**{spell['name']}**" for spell in found_spells])
-                        if len(found_spells) > 1:
-                            embed = disnake.Embed(
-                                title=f"{message.author.name} использовал заклинания",
-                                description=f'<:5816arrowright:1227152456731988009> Список заклинаний: {spell_list}, затрачено {spell['coefficient']}',
-                                colour=EMBED_COLOR
-                            )
-                        elif len(found_spells) == 1:
-                            embed = disnake.Embed(
-                                title=f"{message.author.name} использовал заклинание",
-                                description=f'<:5816arrowright:1227152456731988009> Заклинание: {spell_list}, затрачено {spell['coefficient']}',
-                                colour=EMBED_COLOR
-                            )
-                        self.cursor.execute('UPDATE character SET endurance = ? WHERE name = ?', (endurance, bot_name))
-                        self.db.commit()
+                endurance -= total_cost
 
-
-
+                if endurance <= 0:
+                    embed = disnake.Embed(
+                        title=f"{message.author.name} попытался использовать заклинание...",
+                        description='Персонаж попытался использовать заклинание, однако из-за недостатка выносливости палочка создала взрыв и отлетела в сторону...',
+                        colour=EMBED_COLOR
+                    )
+                    endurance = 0
+                    await message.channel.send(embed=embed)
+                else:
+                    spell_list = "\n".join([f"**{spell['name']}**" for spell in found_spells])
+                    embed = disnake.Embed(
+                        title=f"{message.author.name} использовал заклинания",
+                        description=f'<:5816arrowright:1227152456731988009> Список заклинаний: {spell_list}, затрачено {total_cost}',
+                        colour=EMBED_COLOR
+                    )
                     embed.set_footer(text=f'Выносливость: {str(endurance)[:4]}')
                     await message.channel.send(embed=embed)
+
+                self.cursor.execute('UPDATE character SET endurance = ? WHERE name = ?', (endurance, bot_name))
+                self.db.commit()
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -142,7 +136,7 @@ class Listeners(commands.Cog):
                 faculty TEXT NOT NULL,
                 picture TEXT,
                 relationships INTEGER NOT NULL DEFAULT 50 CHECK (relationships >= 0 AND relationships <= 100),
-                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0),
+                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0 AND endurance <= 500),
                 items TEXT,
                 teacher BOOLEAN NOT NULL
             )
