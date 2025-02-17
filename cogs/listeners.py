@@ -25,8 +25,18 @@ class Listeners(commands.Cog):
 
     @tasks.loop(minutes=10)
     async def restore_endurance(self):
-        self.cursor.execute('UPDATE character SET endurance = endurance + 10 WHERE endurance < 100')
+        self.cursor.execute('SELECT id, age, teacher, endurance FROM character')
+        characters = self.cursor.fetchall() 
+        for character in characters:
+            character_id, age, teacher, endurance = character
+            if teacher == 1 and endurance < 500:
+                self.cursor.execute('UPDATE character SET endurance = endurance + 10 WHERE id = ? AND endurance < 500', (character_id,))
+            elif age > 20 and endurance < 200:
+                self.cursor.execute('UPDATE character SET endurance = endurance + 10 WHERE id = ? AND endurance < 200', (character_id,))
+            elif endurance < 100:
+                self.cursor.execute('UPDATE character SET endurance = endurance + 10 WHERE id = ? AND endurance < 100', (character_id,))
         self.db.commit()
+
 
     @restore_endurance.before_loop
     async def before_restore_endurance(self):
@@ -56,17 +66,34 @@ class Listeners(commands.Cog):
                 endurance = result[0]
                 for spell in found_spells:
                     endurance -= spell['coefficient']
-                    if endurance < 0:
+                    if endurance <= 0:
+                        embed = disnake.Embed(
+                            title=f"{message.author.name} попытался использовать заклинание...",
+                            description=f'Персонаж попытался использовать заклинание, однако из-за недостатка выносливости палочка создала взрыв и отлетела в сторону...',
+                            colour=EMBED_COLOR
+                        )
                         endurance = 0
-                self.cursor.execute('UPDATE character SET endurance = ? WHERE name = ?', (endurance, bot_name))
-                self.db.commit()
-                spell_list = "\n".join([f"**{spell['name']}**" for spell in found_spells])
-                if spell_list != 0: 
-                    embed = disnake.Embed(title=f"{message.author.name} использовал заклинания {spell_list}", colour=EMBED_COLOR)
-                    embed.set_footer(text=f'Выносливость: {str(endurance)[:4]}')
-                    await message.channel.send(embed=embed)
-                else:
-                    embed = disnake.Embed(title=f'{message.author.name} использовал заклинание {spell_list}', colour=EMBED_COLOR)
+                        await message.channel.send(embed=embed)
+                        break
+                    else:
+                        spell_list = "\n".join([f"**{spell['name']}**" for spell in found_spells])
+                        if len(found_spells) > 1:
+                            embed = disnake.Embed(
+                                title=f"{message.author.name} использовал заклинания",
+                                description=f'<:5816arrowright:1227152456731988009> Список заклинаний: {spell_list}, затрачено {spell['coefficient']}',
+                                colour=EMBED_COLOR
+                            )
+                        elif len(found_spells) == 1:
+                            embed = disnake.Embed(
+                                title=f"{message.author.name} использовал заклинание",
+                                description=f'<:5816arrowright:1227152456731988009> Заклинание: {spell_list}, затрачено {spell['coefficient']}',
+                                colour=EMBED_COLOR
+                            )
+                        self.cursor.execute('UPDATE character SET endurance = ? WHERE name = ?', (endurance, bot_name))
+                        self.db.commit()
+
+
+
                     embed.set_footer(text=f'Выносливость: {str(endurance)[:4]}')
                     await message.channel.send(embed=embed)
 
@@ -113,10 +140,11 @@ class Listeners(commands.Cog):
                 name TEXT NOT NULL,
                 age INTEGER NOT NULL,
                 faculty TEXT NOT NULL,
-                picture TEXT NOT NULL,
+                picture TEXT,
                 relationships INTEGER NOT NULL DEFAULT 50 CHECK (relationships >= 0 AND relationships <= 100),
-                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0 AND endurance <= 100),
-                items TEXT 
+                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0),
+                items TEXT,
+                teacher BOOLEAN NOT NULL
             )
         ''')
         self.db.commit()

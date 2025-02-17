@@ -14,31 +14,54 @@ def get_relationship_progress(relationships: int) -> str:
 
 
 class ProfileView(disnake.ui.View):
-    def __init__(self, author_id: int, character_name: str, *args, **kwargs):
+    def __init__(self, author_id: int, character_name: str, member_roles: list, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.author_id = author_id
         self.character_name = character_name
+        self.member_roles = member_roles
+        
+        if any(role.id in {ROLE_ADMIN[0], ROLE_ADMIN[1]} for role in self.member_roles):
+            self.add_rel.disabled = False
+            self.subtract_relationship.disabled = False
+        else:
+            self.add_rel.disabled = True
+            self.subtract_relationship.disabled = True
+
 
     @disnake.ui.button(label='🟢 Добавить +10', style=disnake.ButtonStyle.success)
-    @commands.has_any_role(ROLE_ADMIN[0], ROLE_ADMIN[1])
     async def add_rel(self, button: disnake.ui.Button, inter: disnake.Interaction):
+        if not any(role.id in [ROLE_ADMIN[0], ROLE_ADMIN[1]] for role in inter.author.roles):
+            embed = disnake.Embed(
+                title="❌ Festral | Ошибка",
+                description="У вас нет необходимых ролей для выполнения этого действия.",
+                color=EMBED_COLOR
+            )
+            await inter.response.send_message(embed=embed, ephemeral=True)
+            return
         cursor.execute('SELECT * FROM character WHERE name = ?', (self.character_name,))
         character = cursor.fetchone()
-        cursor.execute('UPDATE character SET relationships = relationships + 10 WHERE id = ?', (character[0],))
-        db.commit()
-        await self.update_profile(inter)
+        if character:
+            cursor.execute('UPDATE character SET relationships = relationships + 10 WHERE id = ?', (character[0],))
+            db.commit()
+            await self.update_profile(inter)
 
     @disnake.ui.button(label="🔴 Вычесть -10", style=disnake.ButtonStyle.danger)
-    @commands.has_any_role(ROLE_ADMIN[0], ROLE_ADMIN[1])
     async def subtract_relationship(self, button: disnake.ui.Button, inter: disnake.Interaction):
+        if not any(role.id in [ROLE_ADMIN[0], ROLE_ADMIN[1]] for role in inter.author.roles):
+            embed = disnake.Embed(
+                title="❌ Festral | Ошибка",
+                description="У вас нет необходимых ролей для выполнения этого действия.",
+                color=EMBED_COLOR
+            )
+            await inter.response.send_message(embed=embed, ephemeral=True)
+            return
+
         cursor.execute('SELECT * FROM character WHERE name = ?', (self.character_name,))
         character = cursor.fetchone()
-        cursor.execute(
-            "UPDATE character SET relationships = relationships - 10 WHERE id = ?",
-            (character[0],)
-        )
-        db.commit()
-        await self.update_profile(inter)
+        if character:
+            cursor.execute('UPDATE character SET relationships = relationships - 10 WHERE id = ?', (character[0],))
+            db.commit()
+            await self.update_profile(inter)
 
     async def update_profile(self, inter: disnake.Interaction):
         cursor.execute("SELECT * FROM character WHERE name = ?", (self.character_name,))
@@ -46,18 +69,15 @@ class ProfileView(disnake.ui.View):
         if character:
             name, age, faculty, picture, relationships, endurance = character[1], character[2], character[3], character[4], character[5], character[6]
             emoji = FACULTY_EMOJI.get(faculty)
-            relationship_progress = get_relationship_progress(int(relationships))  # Преобразуем в прогресс
-            embed = disnake.Embed(
-                title=f"🪄 Festral | Профиль",
-                description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
-                colour=EMBED_COLOR,
-            )
-            embed.set_thumbnail(picture)
-            embed.add_field(
-                name="Показатели",
-                value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*',
-                inline=True
-            )
+            relationship_progress = get_relationship_progress(int(relationships))
+            check_picture = str(picture)
+            if check_picture.startswith('https://cdn.discordapp.com/'):                                                                                                                    
+                embed = disnake.Embed(title=f"🪄 Festral | Профиль", description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}", colour=EMBED_COLOR,)
+                embed.set_thumbnail(picture)
+                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+            else:
+                embed = disnake.Embed(title=f"🪄 Festral | Профиль", description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty} \n **Описание внешности:** {check_picture}", colour=EMBED_COLOR,)
+                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
             await inter.response.edit_message(embed=embed, view=self)
 
 
@@ -147,8 +167,6 @@ class Character(commands.Cog):
         try:
             message = await self.client.wait_for("message", check=check, timeout=60.0)
             character_name = message.content.strip()
-
-            # Удаляем сообщение пользователя
             await message.delete()
 
             cursor.execute('SELECT * FROM character WHERE name = ?', (character_name,))
@@ -158,14 +176,31 @@ class Character(commands.Cog):
                 name, age, faculty, picture, relationships, endurance = character[1], character[2], character[3], character[4], character[5], character[6]
                 emoji = FACULTY_EMOJI.get(faculty)
                 relationship_progress = get_relationship_progress(int(relationships))
-                embed = disnake.Embed(
+                check_pucture = str(picture)
+                member_roles = inter.author.roles
+                view = ProfileView(inter.author.id, character_name, member_roles)
+                if check_pucture.startswith('https'):
+                    embed = disnake.Embed(
                     title=f"🪄 Festral | Профиль",
                     description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
                     colour=EMBED_COLOR,
                 )
-                embed.set_thumbnail(picture)
-                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
-                view = ProfileView(inter.author.id, character_name)
+                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+                    embed.set_thumbnail(picture)
+                elif check_pucture.strip():
+                    embed = disnake.Embed(
+                    title=f"🪄 Festral | Профиль",
+                    description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
+                    colour=EMBED_COLOR,
+                )
+                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+                else:
+                    embed = disnake.Embed(
+                    title=f"🪄 Festral | Профиль",
+                    description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty} \n **Описание внешности:** {picture}",
+                    colour=EMBED_COLOR,
+                )
+                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
                 await pagination_view.message.edit(embed=embed, view=view)
             else:
                 await inter.followup.send(f"Персонаж с именем `{character_name}` не найден.", ephemeral=True)

@@ -8,7 +8,7 @@ class AddSpells(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.slash_command(name='add_spels', description='Добавить заклинание')
+    @commands.slash_command(name='add_spells', description='Добавить заклинание')
     @commands.has_any_role(ROLE_ADMIN[0], ROLE_ADMIN[1])
     async def add_spels(
         self,

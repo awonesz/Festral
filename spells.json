@@ -478,5 +478,69 @@
     {
         "name": "Авада Кедавра",
         "coefficient": 40.6
+    },
+    {
+        "name": "Kò, lavi, nanm ak lanmò. Konekte ak chèn nan ke yo te. Moun ki gen lavi mwen gen entansyon pran. Totalman peye pou mwen!",
+        "coefficient": 30.0
+    },
+    {
+        "name": "Kontakte, fè konnen, ban mwen libète. Depi koulye a ou nan men mwen!",
+        "coefficient": 20.0
+    },
+    {
+        "name": "Sectomica",
+        "coefficient": 14.5
+    },
+    {
+        "name": "Mortiferum hortus",
+        "coefficient": 34.8
+    },
+    {
+        "name": "Сектомика",
+        "coefficient": 14.5
+    },
+    {
+        "name": "Мортиферум Хортус",
+        "coefficient": 34.8
+    },
+    {
+        "name": "Вингардиум Левиоса",
+        "coefficient": 8.5
+    },
+    {
+        "name": "Остолбеней",
+        "coefficient": 9.8
+    },
+    {
+        "name": "Инкарцеро",
+        "coefficient": 13.2
+    },
+    {
+        "name": "Петрификус Тоталус",
+        "coefficient": 14.2
+    },
+    {
+        "name": "Бомбарда",
+        "coefficient": 16.4
+    },
+    {
+        "name": "Бомбарда Максима",
+        "coefficient": 25.8
+    },
+    {
+        "name": "Круциатус",
+        "coefficient": 36.9
+    },
+    {
+        "name": "Круцио",
+        "coefficient": 36.9
+    },
+    {
+        "name": "Империус",
+        "coefficient": 39.2
+    },
+    {
+        "name": "Империо",
+        "coefficient": 39.2
     }
 ]

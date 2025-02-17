@@ -17,12 +17,16 @@ class AddCharacter(commands.Cog):
         inter: disnake.ApplicationCommandInteraction,
         name: str = commands.Param(name="имя", description="Введите имя персонажа"),
         age: int = commands.Param(name="возраст", description="Введите возраст персонажа (цифрами)"),
-        faculty: str = commands.Param(name="факультет", description="Выберите факультет персонажа", choices=["Гриффиндор", "Слизерин", "Пуффендуй", "Когтевран"]),
-        picture: str = commands.Param(name='внешность', description='Добавьте внешность персонажу, нажмите правой кнопкой мыши по арту и "скопировать ссылку"')
+        faculty: str = commands.Param(name="факультет", description="Выберите факультет персонажа", choices=["Гриффиндор", "Слизерин", "Пуффендуй", "Когтевран", "Не имеет"]),
+        picture: str = commands.Param(name='внешность', description='Добавьте внешность персонажу, нажмите правой кнопкой мыши по арту и "скопировать ссылку".'),
+        teacher: str = commands.Param(name='преподаватель', description='Выберите является ли персонаж преподавателем', choices=['Да', 'Нет'])
     ):
+        is_teacher = teacher == "Да"
+
         embed = disnake.Embed(title='🪄 Успешно', description='Вы успешно добавили персонажа в БД!', colour=EMBED_COLOR)
         try:
-            cursor.execute("INSERT INTO character (name, age, faculty, picture) VALUES (?, ?, ?, ?)", (name, age, faculty, picture))
+            cursor.execute("INSERT INTO character (name, age, faculty, picture, teacher) VALUES (?, ?, ?, ?, ?)", 
+                        (name, age, faculty, picture, is_teacher))
             db.commit()
             await inter.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
