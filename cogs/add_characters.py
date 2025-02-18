@@ -3,8 +3,8 @@ from disnake.ext import commands
 import sqlite3
 from config import ROLE_ADMIN, EMBED_COLOR
 
-db = sqlite3.connect('character.db')
-cursor = db.cursor()
+with sqlite3.connect('character.db') as db:
+    cursor = db.cursor()
 
 class AddCharacter(commands.Cog):
     def __init__(self, client):

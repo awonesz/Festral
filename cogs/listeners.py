@@ -5,6 +5,7 @@ from config import EMBED_COLOR, CATEGORIES_RP
 import json
 import os
 import re
+import asyncio
 
 
 def load_spells():
@@ -23,19 +24,22 @@ class Listeners(commands.Cog):
         self.db = sqlite3.connect('character.db')
         self.cursor = self.db.cursor()
         self.restore_endurance.start()
+        self.db_lock = asyncio.Lock()
 
     @tasks.loop(minutes=10)
     async def restore_endurance(self):
-        self.cursor.execute('SELECT id, age, teacher, endurance FROM character')
-        characters = self.cursor.fetchall() 
-        for character in characters:
-            character_id, age, teacher, endurance = character
-            if teacher == 1 and endurance < 500:
-                self.cursor.execute('UPDATE character SET endurance = endurance + 10 WHERE id = ? AND endurance < 500', (character_id,))
-            elif age > 20 and endurance < 200:
-                self.cursor.execute('UPDATE character SET endurance = endurance + 10 WHERE id = ? AND endurance < 200', (character_id,))
-            elif endurance < 100:
-                self.cursor.execute('UPDATE character SET endurance = endurance + 10 WHERE id = ? AND endurance < 100', (character_id,))
+        self.cursor.execute('''
+            UPDATE character
+            SET endurance = CASE
+                WHEN teacher = 1 AND endurance < 500 THEN MIN(endurance + 10, 500)
+                WHEN age > 20 AND endurance < 200 THEN MIN(endurance + 10, 500)
+                WHEN endurance < 100 THEN MIN(endurance + 10, 500)
+                ELSE endurance
+            END
+            WHERE (teacher = 1 AND endurance < 500)
+            OR (age > 20 AND endurance < 200)
+            OR (endurance < 100)
+        ''')
         self.db.commit()
 
 
@@ -69,17 +73,17 @@ class Listeners(commands.Cog):
             if result:
                 endurance = result[0]
                 endurance -= total_cost
-                if endurance <= 0:
+                endurance = max(0, min(endurance, 500))
+
+                if endurance == 0:
                     embed = disnake.Embed(
                         title=f"{message.author.name} попытался использовать заклинание...",
                         description='Персонаж попытался использовать заклинание, однако из-за недостатка выносливости палочка создала взрыв и отлетела в сторону...',
                         colour=EMBED_COLOR
                     )
-                    endurance = 0
                     await message.channel.send(embed=embed)
                 else:
                     spell_list = ", ".join([f"**{spell['name']}**" for spell in found_spells])
-                    
                     if len(found_spells) > 1:
                         embed = disnake.Embed(
                             title=f"{message.author.name} использовал(-а) заклинания",

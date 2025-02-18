@@ -1,11 +1,11 @@
 import disnake
 from disnake.ext import commands
-import sqlite3
 import asyncio
 from config import EMBED_COLOR, FACULTY_EMOJI, ROLE_ADMIN
+import sqlite3
 
-db = sqlite3.connect('character.db')
-cursor = db.cursor()
+with sqlite3.connect('character.db') as db:
+    cursor = db.cursor()
 
 def get_relationship_progress(relationships: int) -> str:
     filled = '■' * (relationships // 10)
@@ -74,10 +74,10 @@ class ProfileView(disnake.ui.View):
             if check_picture.startswith('https://cdn.discordapp.com/'):                                                                                                                    
                 embed = disnake.Embed(title=f"🪄 Festral | Профиль", description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}", colour=EMBED_COLOR,)
                 embed.set_thumbnail(picture)
-                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*', inline=True)
             else:
                 embed = disnake.Embed(title=f"🪄 Festral | Профиль", description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty} \n **Описание внешности:** {check_picture}", colour=EMBED_COLOR,)
-                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+                embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*', inline=True)
             await inter.response.edit_message(embed=embed, view=self)
 
 
@@ -185,7 +185,7 @@ class Character(commands.Cog):
                     description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
                     colour=EMBED_COLOR,
                 )
-                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*', inline=True)
                     embed.set_thumbnail(picture)
                 elif check_pucture.strip():
                     embed = disnake.Embed(
@@ -193,14 +193,14 @@ class Character(commands.Cog):
                     description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
                     colour=EMBED_COLOR,
                 )
-                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*', inline=True)
                 else:
                     embed = disnake.Embed(
                     title=f"🪄 Festral | Профиль",
                     description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty} \n **Описание внешности:** {picture}",
                     colour=EMBED_COLOR,
                 )
-                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{endurance} единиц*', inline=True)
+                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*', inline=True)
                 await pagination_view.message.edit(embed=embed, view=view)
             else:
                 await inter.followup.send(f"Персонаж с именем `{character_name}` не найден.", ephemeral=True)

@@ -1,10 +1,10 @@
 import disnake
 from disnake.ext import commands
-import sqlite3
 from config import ROLE_ADMIN, EMBED_COLOR
+import apsw
 
-db = sqlite3.connect('character.db')
-cursor = db.cursor()
+with apsw.Connection('character.db') as db:
+    cursor = db.cursor()
 
 class DeleteCharacter(commands.Cog):
     def __init__(self, client):
