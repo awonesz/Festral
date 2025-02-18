@@ -4,6 +4,7 @@ import sqlite3
 from config import EMBED_COLOR, CATEGORIES_RP
 import json
 import os
+import re
 
 
 def load_spells():
@@ -50,26 +51,24 @@ class Listeners(commands.Cog):
             return
         if message.channel.category_id not in CATEGORIES_RP:
             return
-
         spells = load_spells()
         content = message.content.lower()
         found_spells = []
-        total_cost = 0  # Суммарные затраты на все заклинания
-
+        total_cost = 0
         for spell in spells:
-            if spell['name'].lower() in content:
-                found_spells.append(spell)
-                total_cost += spell['coefficient']  # Суммируем затраты
-
+            matches = re.findall(rf"\b{re.escape(spell['name'].lower())}\b", content)
+            count = len(matches)
+            if count > 0:
+                for _ in range(count):
+                    found_spells.append(spell)
+                    total_cost += spell['coefficient']
         if found_spells:
             bot_name = message.author.name
             self.cursor.execute('SELECT endurance FROM character WHERE name = ?', (bot_name,))
             result = self.cursor.fetchone()
-
             if result:
                 endurance = result[0]
                 endurance -= total_cost
-
                 if endurance <= 0:
                     embed = disnake.Embed(
                         title=f"{message.author.name} попытался использовать заклинание...",
@@ -79,15 +78,24 @@ class Listeners(commands.Cog):
                     endurance = 0
                     await message.channel.send(embed=embed)
                 else:
-                    spell_list = "\n".join([f"**{spell['name']}**" for spell in found_spells])
-                    embed = disnake.Embed(
-                        title=f"{message.author.name} использовал заклинания",
-                        description=f'<:5816arrowright:1227152456731988009> Список заклинаний: {spell_list}, затрачено {total_cost}',
-                        colour=EMBED_COLOR
-                    )
+                    spell_list = ", ".join([f"**{spell['name']}**" for spell in found_spells])
+                    
+                    if len(found_spells) > 1:
+                        embed = disnake.Embed(
+                            title=f"{message.author.name} использовал(-а) заклинания",
+                            description=f'<:5816arrowright:1227152456731988009> Список заклинаний: {spell_list}, затрачено {total_cost}',
+                            colour=EMBED_COLOR
+                        )
+                    else:
+                        embed = disnake.Embed(
+                            title=f"{message.author.name} использовал(-а) заклинание",
+                            description=f'<:5816arrowright:1227152456731988009> Заклинание: {spell_list}, затрачено {total_cost}',
+                            colour=EMBED_COLOR
+                        )
+                    
                     embed.set_footer(text=f'Выносливость: {str(endurance)[:4]}')
                     await message.channel.send(embed=embed)
-
+                
                 self.cursor.execute('UPDATE character SET endurance = ? WHERE name = ?', (endurance, bot_name))
                 self.db.commit()
 
