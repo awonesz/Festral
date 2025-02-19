@@ -33,14 +33,14 @@ class DeleteSpells(commands.Cog):
                 json.dump(data, f, indent=4, ensure_ascii=False)
 
             embed = disnake.Embed(
-                title="🪄 Festral | Успешно",
+                title="<:7057checkmark:1227245983616991262> Festral | Успешно",
                 description=f"Заклинание __{spell_name}__ было успешно удалено.",
                 colour=EMBED_COLOR
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
         else:
             embed = disnake.Embed(
-                title="🪄 Festral | Ошибка",
+                title="<:7382no:1227261658485883002> Festral | Ошибка",
                 description=f"Заклинание __{spell_name}__ не найдено.",
                 colour=disnake.Colour.red()
             )

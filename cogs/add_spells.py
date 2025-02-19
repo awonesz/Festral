@@ -37,7 +37,7 @@ class AddSpells(commands.Cog):
             json.dump(data, f, indent=4, ensure_ascii=False)
 
         embed = disnake.Embed(
-            title="🪄 Festral | Успешно",
+            title="<:7057checkmark:1227245983616991262> Festral | Успешно",
             description=f"Вы успешно добавили заклинание __{spells}__ с коэффициентом __{coef}__",
             colour=EMBED_COLOR
         )

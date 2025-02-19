@@ -3,6 +3,7 @@ from disnake.ext import commands
 import asyncio
 from config import EMBED_COLOR, FACULTY_EMOJI, ROLE_ADMIN
 import sqlite3
+from rapidfuzz import process, fuzz
 
 with sqlite3.connect('character.db') as db:
     cursor = db.cursor()
@@ -157,6 +158,8 @@ class Character(commands.Cog):
     async def profiles(self, inter: disnake.ApplicationCommandInteraction):
         cursor.execute('SELECT * FROM character')
         data = cursor.fetchall()
+        character_names = {row[1]: row for row in data}
+
         pagination_view = PaginationView(author_id=inter.author.id, timeout=None)
         pagination_view.data = data
         await pagination_view.send(inter)
@@ -166,48 +169,59 @@ class Character(commands.Cog):
 
         try:
             message = await self.client.wait_for("message", check=check, timeout=60.0)
-            character_name = message.content.strip()
+            input_name = message.content.strip()
             await message.delete()
-
-            cursor.execute('SELECT * FROM character WHERE name = ?', (character_name,))
-            character = cursor.fetchone()
+            if input_name in character_names:
+                character = character_names[input_name]
+            else:
+                names_list = list(character_names.keys())
+                best_match = process.extractOne(input_name, names_list, scorer=fuzz.WRatio)
+                if best_match and best_match[1] >= 70: 
+                    character = character_names[best_match[0]]
+                else:
+                    character = None
 
             if character:
-                name, age, faculty, picture, relationships, endurance = character[1], character[2], character[3], character[4], character[5], character[6]
+                name, age, faculty, picture, relationships, endurance = (
+                    character[1], character[2], character[3], character[4], character[5], character[6]
+                )
                 emoji = FACULTY_EMOJI.get(faculty)
                 relationship_progress = get_relationship_progress(int(relationships))
-                check_pucture = str(picture)
+                check_picture = str(picture)
                 member_roles = inter.author.roles
-                view = ProfileView(inter.author.id, character_name, member_roles)
-                if check_pucture.startswith('https'):
+                view = ProfileView(inter.author.id, name, member_roles)
+
+                if check_picture.startswith('https'):
                     embed = disnake.Embed(
-                    title=f"🪄 Festral | Профиль",
-                    description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
-                    colour=EMBED_COLOR,
-                )
-                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*', inline=True)
-                    embed.set_thumbnail(picture)
-                elif check_pucture.strip():
+                        title=f"🪄 Festral | Профиль",
+                        description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
+                        colour=EMBED_COLOR,
+                    )
+                    embed.set_thumbnail(url=picture)
+                elif check_picture.strip():
                     embed = disnake.Embed(
-                    title=f"🪄 Festral | Профиль",
-                    description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
-                    colour=EMBED_COLOR,
-                )
-                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*', inline=True)
+                        title=f"🪄 Festral | Профиль",
+                        description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty}",
+                        colour=EMBED_COLOR,
+                    )
                 else:
                     embed = disnake.Embed(
-                    title=f"🪄 Festral | Профиль",
-                    description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty} \n **Описание внешности:** {picture}",
-                    colour=EMBED_COLOR,
+                        title=f"🪄 Festral | Профиль",
+                        description=f"**Имя:** {name} \n **Возраст:** {age}\n**Факультет:** {emoji} {faculty} \n **Описание внешности:** {picture}",
+                        colour=EMBED_COLOR,
+                    )
+
+                embed.add_field(
+                    name="Показатели",
+                    value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*',
+                    inline=True
                 )
-                    embed.add_field(name="Показатели", value=f'> __Отношения с палочкой:__ \n *{relationship_progress}* \n > __Выносливость:__ \n *{str(endurance)[:4]} единиц*', inline=True)
                 await pagination_view.message.edit(embed=embed, view=view)
             else:
-                await inter.followup.send(f"Персонаж с именем `{character_name}` не найден.", ephemeral=True)
+                await inter.followup.send(f"Персонаж с именем `{input_name}` не найден.", ephemeral=True)
 
         except asyncio.TimeoutError:
             await inter.followup.send("Время ожидания истекло. Попробуйте снова.", ephemeral=True)
-
 
 def setup(client):
     client.add_cog(Character(client))

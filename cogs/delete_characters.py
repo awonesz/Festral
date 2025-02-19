@@ -17,7 +17,7 @@ class DeleteCharacter(commands.Cog):
         inter: disnake.ApplicationCommandInteraction,
         name: str = commands.Param(name="имя", description="Введите имя персонажа"),
     ):
-        embed = disnake.Embed(title='🪄 Festral | Успешно', description='Вы успешно удалили персонажа из БД!', colour=EMBED_COLOR)
+        embed = disnake.Embed(title='<:7057checkmark:1227245983616991262> Festral | Успешно', description='Вы успешно удалили персонажа из БД!', colour=EMBED_COLOR)
         try:
             cursor.execute("DELETE FROM character WHERE name = (?)", (name,))
             db.commit()

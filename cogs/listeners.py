@@ -30,18 +30,10 @@ class Listeners(commands.Cog):
     async def restore_endurance(self):
         self.cursor.execute('''
             UPDATE character
-            SET endurance = CASE
-                WHEN teacher = 1 AND endurance < 500 THEN MIN(endurance + 10, 500)
-                WHEN age > 20 AND endurance < 200 THEN MIN(endurance + 10, 500)
-                WHEN endurance < 100 THEN MIN(endurance + 10, 500)
-                ELSE endurance
-            END
-            WHERE (teacher = 1 AND endurance < 500)
-            OR (age > 20 AND endurance < 200)
-            OR (endurance < 100)
+            SET endurance = MIN(endurance + 10, max_endurance)
+            WHERE endurance < max_endurance
         ''')
         self.db.commit()
-
 
     @restore_endurance.before_loop
     async def before_restore_endurance(self):
@@ -55,25 +47,28 @@ class Listeners(commands.Cog):
             return
         if message.channel.category_id not in CATEGORIES_RP:
             return
+
         spells = load_spells()
-        content = message.content.lower()
+        content = message.content
         found_spells = []
         total_cost = 0
-        for spell in spells:
-            matches = re.findall(rf"\b{re.escape(spell['name'].lower())}\b", content)
-            count = len(matches)
-            if count > 0:
-                for _ in range(count):
+        spell_matches = re.findall(r'\*\*(.*?)\*\*', content)
+        for match in spell_matches:
+            potential_spells = [s.strip().lower() for s in re.split(r'[,\s]+', match)]
+            for spell_name in potential_spells:
+                spell = next((s for s in spells if s['name'].lower() == spell_name), None)
+                if spell:
                     found_spells.append(spell)
                     total_cost += spell['coefficient']
+
         if found_spells:
             bot_name = message.author.name
-            self.cursor.execute('SELECT endurance FROM character WHERE name = ?', (bot_name,))
+            self.cursor.execute('SELECT endurance, max_endurance FROM character WHERE name = ?', (bot_name,))
             result = self.cursor.fetchone()
             if result:
-                endurance = result[0]
+                endurance, max_endurance = result
                 endurance -= total_cost
-                endurance = max(0, min(endurance, 500))
+                endurance = max(0, min(endurance, max_endurance))
 
                 if endurance == 0:
                     embed = disnake.Embed(
@@ -97,7 +92,7 @@ class Listeners(commands.Cog):
                             colour=EMBED_COLOR
                         )
                     
-                    embed.set_footer(text=f'Выносливость: {str(endurance)[:4]}')
+                    embed.set_footer(text=f'Выносливость: {endurance}/{max_endurance}')
                     await message.channel.send(embed=embed)
                 
                 self.cursor.execute('UPDATE character SET endurance = ? WHERE name = ?', (endurance, bot_name))
@@ -148,9 +143,10 @@ class Listeners(commands.Cog):
                 faculty TEXT NOT NULL,
                 picture TEXT,
                 relationships INTEGER NOT NULL DEFAULT 50 CHECK (relationships >= 0 AND relationships <= 100),
-                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0 AND endurance <= 500),
+                endurance INTEGER NOT NULL DEFAULT 100 CHECK (endurance >= 0 AND endurance <= max_endurance),
+                max_endurance INTEGER NOT NULL DEFAULT 100,
                 items TEXT,
-                teacher BOOLEAN NOT NULL
+                uncommon_role BOOLEAN NOT NULL
             )
         ''')
         self.db.commit()
